@@ -1,6 +1,7 @@
 import streamlit as st
 import datetime
 import matplotlib.pyplot as plt
+import pandas as pd
 
 st.set_page_config(page_title="Tabela Menstrual", layout="centered")
 
@@ -15,6 +16,49 @@ duracao_ciclo = st.number_input("Duração média do ciclo (dias)", min_value=21
 # Histórico
 if "historico" not in st.session_state:
     st.session_state.historico = []
+
+# Função da tabela de fases
+def gerar_fases_ciclo(data_menstruacao):
+    return [
+        {
+            "Dia do Ciclo": "Dia 1",
+            "Data (aproximada)": (data_menstruacao).strftime('%d de %B'),
+            "Fase do Ciclo": "Início da menstruação"
+        },
+        {
+            "Dia do Ciclo": "Dia 5-6",
+            "Data (aproximada)": (data_menstruacao + datetime.timedelta(days=4)).strftime('%d') +
+                                "–" +
+                                (data_menstruacao + datetime.timedelta(days=5)).strftime('%d de %B'),
+            "Fase do Ciclo": "Fim da menstruação"
+        },
+        {
+            "Dia do Ciclo": "Dia 10-12",
+            "Data (aproximada)": (data_menstruacao + datetime.timedelta(days=9)).strftime('%d') +
+                                "–" +
+                                (data_menstruacao + datetime.timedelta(days=11)).strftime('%d de %B'),
+            "Fase do Ciclo": "Fase fértil começa"
+        },
+        {
+            "Dia do Ciclo": "Dia 13-15",
+            "Data (aproximada)": (data_menstruacao + datetime.timedelta(days=12)).strftime('%d') +
+                                "–" +
+                                (data_menstruacao + datetime.timedelta(days=14)).strftime('%d de %B'),
+            "Fase do Ciclo": "Ovulação (máxima fertilidade)"
+        },
+        {
+            "Dia do Ciclo": "Dia 16-22",
+            "Data (aproximada)": (data_menstruacao + datetime.timedelta(days=15)).strftime('%d %b') +
+                                " – " +
+                                (data_menstruacao + datetime.timedelta(days=21)).strftime('%d %b'),
+            "Fase do Ciclo": "Pós-ovulação"
+        },
+        {
+            "Dia do Ciclo": "Dia 1 novo",
+            "Data (aproximada)": (data_menstruacao + datetime.timedelta(days=duracao_ciclo)).strftime('%d de %B'),
+            "Fase do Ciclo": "Nova menstruação"
+        }
+    ]
 
 # Botão de previsão
 if st.button("Gerar Previsão"):
@@ -37,7 +81,6 @@ if st.button("Gerar Previsão"):
             "prox_menstruacao": fim
         })
 
-        # Exibe o ciclo atual
         if i == 0:
             st.success(f"Próxima menstruação: {fim.strftime('%d/%m/%Y')}")
             st.info(f"Período fértil estimado: {fertil_ini.strftime('%d/%m')} a {fertil_fim.strftime('%d/%m')}")
@@ -70,6 +113,11 @@ if st.button("Gerar Previsão"):
     )
     ax.set_title('Visualização dos Próximos 3 Ciclos')
     st.pyplot(fig)
+
+    # Tabela com as fases do ciclo
+    st.subheader("Fases do Ciclo Atual")
+    fases_df = pd.DataFrame(gerar_fases_ciclo(data_menstruacao))
+    st.table(fases_df)
 
 # Histórico
 if st.session_state.historico:
