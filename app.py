@@ -4,30 +4,39 @@ import matplotlib.pyplot as plt
 
 st.set_page_config(page_title="Tabela Menstrual", layout="centered")
 
-# Estilo visual com CSS
+# Estilo visual melhorado
 st.markdown("""
     <style>
-        .main { background-color: #f2f2f2; }
+        .main {
+            background-color: #fafafa;
+        }
         .block-container {
             padding: 2rem;
-            background-color: white;
+            background-color: #ffffff;
             border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0,0,0,0.1);
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
         }
-        h1 { color: #ff4b4b; }
+        h1 {
+            color: #d6336c;
+        }
         .stButton>button {
-            background-color: #ff4b4b;
+            background-color: #d6336c;
             color: white;
             border-radius: 10px;
             font-weight: bold;
+            padding: 0.5em 1em;
         }
         .stButton>button:hover {
-            background-color: #e60000;
+            background-color: #a61e4d;
+        }
+        table, th, td {
+            color: #333 !important;
         }
     </style>
 """, unsafe_allow_html=True)
 
-st.title("Tabela Menstrual Simples")
+# Título estilizado
+st.markdown("<h1 style='text-align: center; color: #d6336c;'>Tabela Menstrual Simples</h1>", unsafe_allow_html=True)
 
 st.markdown("Preencha os dados abaixo para gerar a previsão do seu ciclo menstrual:")
 
@@ -77,10 +86,10 @@ if st.button("Gerar Previsão"):
     for ciclo in ciclos:
         dias = [ciclo["inicio"] + datetime.timedelta(days=i) for i in range(duracao_ciclo)]
         cores = [
-            'red' if d == ciclo["inicio"] else
-            'orange' if ciclo["fertil_ini"] <= d <= ciclo["fertil_fim"] else
-            'pink' if d == ciclo["ovulacao"] else
-            'lightgrey' for d in dias
+            '#ffb3c6' if d == ciclo["inicio"] else
+            '#ffdfba' if ciclo["fertil_ini"] <= d <= ciclo["fertil_fim"] else
+            '#cdb4db' if d == ciclo["ovulacao"] else
+            '#eeeeee' for d in dias
         ]
         ax.bar(dias, [1]*len(dias), color=cores)
 
@@ -96,11 +105,11 @@ if st.session_state.historico:
     st.table(st.session_state.historico)
 
 # Botão de reset
-if st.button("Resetar Previsões"):
+if st.button("Redefinir Previsões"):
     st.session_state.historico = []
     st.success("Histórico resetado com sucesso.")
 
-# Rodapé com copyright
+# Rodapé
 st.markdown("""
     <hr style="margin-top: 3rem; margin-bottom: 1rem;">
     <div style="text-align: center; color: gray; font-size: 0.9rem;">
