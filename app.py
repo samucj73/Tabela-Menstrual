@@ -2,76 +2,10 @@ import streamlit as st
 import datetime
 import matplotlib.pyplot as plt
 
-# Definir a configuração da página
 st.set_page_config(page_title="Tabela Menstrual", layout="centered")
 
-# Adicionar a opção de tema (escuro/claro)
-st.sidebar.title("Configurações")
-tema = st.sidebar.radio("Escolha o tema:", ["Claro", "Escuro"])
-
-# Definir o tema com base na seleção
-if tema == "Escuro":
-    st.markdown("""
-        <style>
-            .main {
-                background-color: #2e2e2e;
-                color: white;
-            }
-            .block-container {
-                background-color: #444;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-                padding: 2rem;
-            }
-            .stButton>button {
-                background-color: #6c757d;
-                color: white;
-                border-radius: 10px;
-                font-weight: bold;
-                padding: 0.5em 1em;
-            }
-            .stButton>button:hover {
-                background-color: #5a6368;
-            }
-            .stTable {
-                color: white;
-            }
-        </style>
-    """, unsafe_allow_html=True)
-else:
-    st.markdown("""
-        <style>
-            .main {
-                background-color: #fafafa;
-            }
-            .block-container {
-                padding: 2rem;
-                background-color: #ffffff;
-                border-radius: 10px;
-                box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
-            }
-            h1, h2, h3, p {
-                color: #333;
-            }
-            .stButton>button {
-                background-color: #d6336c;
-                color: white;
-                border-radius: 10px;
-                font-weight: bold;
-                padding: 0.5em 1em;
-            }
-            .stButton>button:hover {
-                background-color: #a61e4d;
-            }
-            .stTable {
-                color: black;
-            }
-        </style>
-    """, unsafe_allow_html=True)
-
-# Título
-st.title("Tabela Menstrual Simples")
-
+# Cabeçalho centralizado
+st.markdown("<h1 style='text-align: center;'>Tabela Menstrual Simples</h1>", unsafe_allow_html=True)
 st.write("Preencha os dados abaixo para gerar a previsão do seu ciclo menstrual:")
 
 # Inputs
@@ -116,7 +50,7 @@ if st.button("Gerar Previsão"):
             })
 
     # Gráfico dos ciclos
-    fig, ax = plt.subplots(figsize=(12, 2))
+    fig, ax = plt.subplots(figsize=(10, 2))
     for ciclo in ciclos:
         dias = [ciclo["inicio"] + datetime.timedelta(days=i) for i in range(duracao_ciclo)]
         cores = [
@@ -129,7 +63,11 @@ if st.button("Gerar Previsão"):
 
     ax.set_yticks([])
     ax.set_xticks([c["inicio"] for c in ciclos] + [c["prox_menstruacao"] for c in ciclos])
-    ax.set_xticklabels([f'Ciclo {i+1} Início' for i in range(3)] + [f'Ciclo {i+1} Fim' for i in range(3)], rotation=45)
+    ax.set_xticklabels(
+        [f'Ciclo {i+1} Início' for i in range(3)] +
+        [f'Ciclo {i+1} Fim' for i in range(3)],
+        rotation=45
+    )
     ax.set_title('Visualização dos Próximos 3 Ciclos')
     st.pyplot(fig)
 
@@ -143,7 +81,6 @@ if st.button("Redefinir Previsões"):
     st.session_state.historico = []
     st.success("Histórico resetado com sucesso.")
 
-# Rodapé
+# Rodapé centralizado
 st.markdown("---")
-st.markdown("**Aplicativo desenvolvido por Samucj Technology**")
-st.caption("Todos os direitos reservados.")
+st.markdown("<div style='text-align: center;'>© Aplicativo desenvolvido por <strong>Samucj Technology</strong><br>Todos os direitos reservados.</div>", unsafe_allow_html=True)
