@@ -127,4 +127,4 @@ if st.button("Redefinir Previsões"):
 
 # Rodapé centralizado
 st.markdown("---")
-st.markdown("<div style='text-align: center;'>© Aplicativo desenvolvido por <strong>Samucj Technology</strong><br>Todos os direitos reservados.</div>", unsafe_allow_html=True)
+st.markdown("<div style='text-align: center;'>© <strong>Samucj Technology</strong><br>Todos os direitos reservados.</div>", unsafe_allow_html=True)
