@@ -10,7 +10,7 @@ st.markdown("<h1 style='text-align: center;'>Tabela Menstrual Simples</h1>", uns
 st.write("Preencha os dados abaixo para gerar a previsão do seu ciclo menstrual:")
 
 # Inputs
-data_menstruacao = st.date_input("Data da última menstruação")
+data_menstruacao = st.date_input("Data da última menstruação", format="DD/MM/YYYY")
 duracao_ciclo = st.number_input("Duração média do ciclo (dias)", min_value=21, max_value=35, value=28)
 
 # Histórico
@@ -22,40 +22,32 @@ def gerar_fases_ciclo(data_menstruacao):
     return [
         {
             "Dia do Ciclo": "Dia 1",
-            "Data (aproximada)": (data_menstruacao).strftime('%d de %B'),
+            "Data (aproximada)": (data_menstruacao).strftime('%d/%m/%Y'),
             "Fase do Ciclo": "Início da menstruação"
         },
         {
             "Dia do Ciclo": "Dia 5-6",
-            "Data (aproximada)": (data_menstruacao + datetime.timedelta(days=4)).strftime('%d') +
-                                "–" +
-                                (data_menstruacao + datetime.timedelta(days=5)).strftime('%d de %B'),
+            "Data (aproximada)": f"{(data_menstruacao + datetime.timedelta(days=4)).strftime('%d')}–{(data_menstruacao + datetime.timedelta(days=5)).strftime('%d/%m/%Y')}",
             "Fase do Ciclo": "Fim da menstruação"
         },
         {
             "Dia do Ciclo": "Dia 10-12",
-            "Data (aproximada)": (data_menstruacao + datetime.timedelta(days=9)).strftime('%d') +
-                                "–" +
-                                (data_menstruacao + datetime.timedelta(days=11)).strftime('%d de %B'),
+            "Data (aproximada)": f"{(data_menstruacao + datetime.timedelta(days=9)).strftime('%d')}–{(data_menstruacao + datetime.timedelta(days=11)).strftime('%d/%m/%Y')}",
             "Fase do Ciclo": "Fase fértil começa"
         },
         {
             "Dia do Ciclo": "Dia 13-15",
-            "Data (aproximada)": (data_menstruacao + datetime.timedelta(days=12)).strftime('%d') +
-                                "–" +
-                                (data_menstruacao + datetime.timedelta(days=14)).strftime('%d de %B'),
+            "Data (aproximada)": f"{(data_menstruacao + datetime.timedelta(days=12)).strftime('%d')}–{(data_menstruacao + datetime.timedelta(days=14)).strftime('%d/%m/%Y')}",
             "Fase do Ciclo": "Ovulação (máxima fertilidade)"
         },
         {
             "Dia do Ciclo": "Dia 16-22",
-            "Data (aproximada)": (data_menstruacao + datetime.timedelta(days=15)).strftime('%d %b') +
-                                " – " +
-                                (data_menstruacao + datetime.timedelta(days=21)).strftime('%d %b'),
+            "Data (aproximada)": f"{(data_menstruacao + datetime.timedelta(days=15)).strftime('%d/%m')} – {(data_menstruacao + datetime.timedelta(days=21)).strftime('%d/%m')}",
             "Fase do Ciclo": "Pós-ovulação"
         },
         {
             "Dia do Ciclo": "Dia 1 novo",
-            "Data (aproximada)": (data_menstruacao + datetime.timedelta(days=duracao_ciclo)).strftime('%d de %B'),
+            "Data (aproximada)": (data_menstruacao + datetime.timedelta(days=duracao_ciclo)).strftime('%d/%m/%Y'),
             "Fase do Ciclo": "Nova menstruação"
         }
     ]
@@ -86,10 +78,10 @@ if st.button("Gerar Previsão"):
             st.info(f"Período fértil estimado: {fertil_ini.strftime('%d/%m')} a {fertil_fim.strftime('%d/%m')}")
             st.warning(f"Ovulação prevista: {ovulacao.strftime('%d/%m/%Y')}")
             st.session_state.historico.append({
-                "Data da última": inicio.strftime('%d/%m/%Y'),
-                "Próxima menstruação": fim.strftime('%d/%m/%Y'),
+                "Data da Última": inicio.strftime('%d/%m/%Y'),
+                "Próxima Menstruação": fim.strftime('%d/%m/%Y'),
                 "Ovulação": ovulacao.strftime('%d/%m/%Y'),
-                "Período fértil": f"{fertil_ini.strftime('%d/%m')} - {fertil_fim.strftime('%d/%m')}"
+                "Período Fértil": f"{fertil_ini.strftime('%d/%m')} - {fertil_fim.strftime('%d/%m')}"
             })
 
     # Gráfico dos ciclos
@@ -117,12 +109,16 @@ if st.button("Gerar Previsão"):
     # Tabela com as fases do ciclo
     st.subheader("Fases do Ciclo Atual")
     fases_df = pd.DataFrame(gerar_fases_ciclo(data_menstruacao))
-    st.table(fases_df)
+    st.dataframe(fases_df, use_container_width=True)
 
 # Histórico
 if st.session_state.historico:
     st.subheader("Histórico de Ciclos")
-    st.table(st.session_state.historico)
+
+    historico_df = pd.DataFrame(st.session_state.historico)
+    historico_df.index += 1
+    historico_df.index.name = "Ciclo"
+    st.dataframe(historico_df, use_container_width=True)
 
 # Botão de reset
 if st.button("Redefinir Previsões"):
